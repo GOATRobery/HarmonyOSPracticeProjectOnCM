@@ -1,0 +1,14 @@
+{
+  "routerMap": [
+    {
+      "name": "HMAdvertisePage",
+      "pageSourceFile": "src/main/ets/pages/HMAdvertisePage.ets",
+      "buildFunction": "HMAdvertisePageBuilder"
+    },
+    {
+      "name": "HMHomePage",
+      "pageSourceFile": "src/main/ets/pages/HMHomePage.ets",
+      "buildFunction": "HMHomePageBuilder"
+    }
+  ]
+}
