@@ -1,3 +1,5 @@
+import "./HMHomePage"
+
 @Builder
 export function HMMainPageBuilder() {
   HMMainPage()
@@ -37,7 +39,7 @@ struct HMMainPage {
         ForEach(this.tabBarData, (item: HMTabData, index: number) => {
           TabContent(){
             if (this.currentIndex == 0) {
-
+              HMMainPage()
             }else if (this.currentIndex == 2) {
 
             }else {
