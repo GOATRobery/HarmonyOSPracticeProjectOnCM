@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>基于现有 HMMainPage 完善四个 Tab · HarmonyOS 分步实践</title>
+  <style>
+    :root{--paper:#f7f7f2;--card:#fff;--ink:#192c2b;--muted:#64726d;--accent:#18705d;--soft:#e8f2ec;--line:#dce3dc;--code:#192b30;--code-ink:#e6eeeb;--warn:#fff7e8}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #db9950;outline-offset:4px}::selection{background:#cce6d8}code,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}p,li,td{overflow-wrap:anywhere}p{margin:12px 0}p code,li code,td code,.note code{font-size:.88em;background:#ecf0eb;padding:2px 5px;border-radius:4px}h1,h2,h3{line-height:1.35;letter-spacing:-.035em}h1{font-size:clamp(34px,4.2vw,56px);margin:18px 0}h2{font-size:27px;margin:0}h3{font-size:18px;margin:25px 0 8px}ul,ol{padding-left:23px}li{margin:5px 0}
+    .layout{max-width:1440px;margin:auto;display:grid;grid-template-columns:242px minmax(0,1fr);gap:64px;padding:0 52px}.sidebar{position:sticky;top:0;height:100vh;padding:43px 0 28px;display:flex;flex-direction:column;overflow:auto}.brand{font-size:13px;font-weight:750;letter-spacing:.12em;display:flex;align-items:center;gap:10px}.brand-mark{width:28px;height:28px;border:1.5px solid var(--accent);border-radius:9px;display:grid;place-items:center;color:var(--accent);font-size:16px}.side-caption{font-size:12px;color:var(--muted);letter-spacing:.12em;margin:48px 0 13px}.sidebar nav{display:grid;gap:5px}.sidebar nav a{display:flex;gap:12px;align-items:center;border-radius:8px;padding:10px;color:var(--muted);font-size:14px;line-height:1.6}.sidebar nav a span{font:12px/1.6 monospace;opacity:.65}.sidebar nav a:hover,.sidebar nav a.active{background:var(--soft);color:var(--accent);text-decoration:none}.side-foot{margin-top:auto;padding-top:36px;font-size:12px;color:var(--muted)}.print-button{background:transparent;border:1px solid var(--line);padding:8px 14px;border-radius:8px;color:var(--ink);margin-top:14px;font-size:13px}.print-button:hover{background:white}main{min-width:0;padding-bottom:60px}.hero{padding:65px 0 35px;border-bottom:1px solid var(--line)}.eyebrow{font-size:12px;letter-spacing:.13em;color:var(--accent);font-weight:700}.lead{font-size:18px;color:var(--muted);max-width:690px;line-height:1.85}.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.pill{font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}.section{padding:38px 0;border-bottom:1px solid var(--line)}.section-heading{display:flex;gap:17px;align-items:center;margin-bottom:20px}.step-number{flex:none;width:42px;height:42px;display:grid;place-items:center;background:var(--soft);border:1px solid #cfdfd3;border-radius:13px;font:600 15px monospace;color:var(--accent)}.section-kicker{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin-bottom:3px}.intro-title{font-size:22px}.note{padding:16px 20px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 8px 8px 0;margin:20px 0;font-size:14px}.note strong{color:var(--accent)}.note.warning{background:var(--warn);border-color:#bf8c45}.note.warning strong{color:#936b2f}.checkpoint{margin-top:22px;color:var(--accent);font-size:14px;display:flex;gap:10px;align-items:flex-start}.checkpoint:before{content:'✓';display:grid;place-items:center;flex:none;width:22px;height:22px;margin-top:2px;border-radius:50%;background:#dfede2;font-size:12px;font-weight:700}.file-label{font-size:13px;color:var(--muted);margin:18px 0 7px;overflow-wrap:anywhere}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:18px 0;background:white}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}th,td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);background:#f0f3ed;font-weight:600;white-space:nowrap}tr:last-child td{border-bottom:0}.source-roots{font-size:12px;color:var(--muted);line-height:1.8}.source-roots code{display:block;overflow-wrap:anywhere;background:none;padding:0;font-size:12px}.code-block{margin:13px 0 22px;background:var(--code);border:1px solid #263b40;border-radius:12px;overflow:hidden}.code-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 16px;background:#22363b;border-bottom:1px solid #314448;color:#b4c8c5;font:12px/1.6 monospace}.copy{border:1px solid #47605f;border-radius:5px;background:transparent;color:#dfebe6;padding:3px 10px;font:12px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;white-space:nowrap}.copy:hover{background:#324c50}pre{margin:0;padding:21px 22px;overflow-x:auto;color:var(--code-ink);font-size:13px;line-height:1.85;tab-size:2}pre code{font:inherit}.architecture{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:25px;margin:24px 0}.flow-row{display:grid;grid-template-columns:1fr 34px 1fr 34px 1.15fr;align-items:center;gap:6px}.flow-node{padding:15px 9px;border:1px solid var(--line);border-radius:9px;text-align:center;min-width:0}.flow-node strong{display:block;font-size:13px}.flow-node small{display:block;font-size:11px;color:var(--muted)}.flow-node.main{border-color:#81b59c;background:var(--soft)}.flow-arrow{text-align:center;color:#7c9b8c;font-size:21px}.flow-caption{text-align:center;font-size:12px;color:var(--muted);margin:14px 0}.tab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tab-node{text-align:center;padding:12px 5px;background:#f4f6f1;border-radius:7px;font-size:13px}.tab-node small{display:block;color:var(--muted);font:10px/1.7 monospace}.route-chain{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;margin:16px 0;color:var(--muted)}.route-chain code{padding:5px 9px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--ink)}details{margin:20px 0;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 18px}summary{cursor:pointer;padding:14px 0;color:var(--accent);font-size:14px;font-weight:600}details .code-block{margin-top:2px}footer{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:15px;margin-top:28px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.top-link{white-space:nowrap}
+    @media(min-width:1400px){.layout{gap:84px}}
+    @media(max-width:1000px){.layout{grid-template-columns:190px minmax(0,1fr);gap:30px;padding:0 28px}.sidebar nav a{font-size:13px}.flow-row{grid-template-columns:1fr 20px 1fr 20px 1fr}.architecture{padding:18px}.flow-node strong{font-size:11px}}
+    @media(max-width:760px){.layout{display:block;padding:0 20px}.sidebar{position:static;height:auto;padding:20px 0 0;overflow:visible}.side-caption,.side-foot{display:none}.sidebar nav{display:flex;overflow-x:auto;gap:5px;padding:16px 0 12px;border-bottom:1px solid var(--line)}.sidebar nav a{flex:none;padding:7px 10px;font-size:12px}.sidebar nav a span{display:none}.hero{padding:29px 0}.lead{font-size:16px}.section{padding:29px 0}h2{font-size:23px}.section-heading{gap:12px}.step-number{width:36px;height:36px;border-radius:10px}.flow-row{grid-template-columns:1fr;gap:6px}.flow-arrow{transform:rotate(90deg);line-height:1.2}.flow-node strong{font-size:13px}.tab-grid{grid-template-columns:repeat(2,1fr)}pre{font-size:12px;padding:17px 15px}.code-head{padding:9px 12px}th,td{padding:11px 12px;min-width:105px}.note{padding:13px 15px}.source-roots code{font-size:11px}footer{flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    @media print{@page{size:A4;margin:17mm}body{background:white;color:#182524;font-size:10pt;line-height:1.6}.layout{display:block;max-width:none;padding:0}.sidebar,.copy,.top-link{display:none}main{padding:0}.hero{padding:0 0 18px}h1{font-size:30pt}h2{font-size:19pt}.section{padding:20px 0}.section-heading{break-after:avoid}pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#182524;background:#f4f5f2;font-size:8pt;padding:13px}.code-head{background:#edf0e9;color:#384f46}.code-block{border-color:#ccd5cc}.code-block,table,.note,.architecture{break-inside:avoid}.table-wrap{overflow:visible}th,td{padding:8px;font-size:9pt}.pills{margin-top:12px}details{border:0;padding:0}details:not([open]){display:none}footer{font-size:9pt}a{color:inherit}.flow-node,.tab-node,.note,.step-number{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" aria-label="教程目录">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">H</span>HARMONYOS LAB</a>
+      <div class="side-caption">本篇实践 / CONTENTS</div>
+      <nav>
+        <a href="#overview" class="active"><span>00</span>先看整体结构</a>
+        <a href="#step1"><span>01</span>修正现有内容区域</a>
+        <a href="#step2"><span>02</span>注册页面路由</a>
+        <a href="#step3"><span>03</span>核对已有广告跳转</a>
+        <a href="#step4"><span>04</span>补齐选中状态</a>
+        <a href="#step5"><span>05</span>拆出四个内容页</a>
+        <a href="#step6"><span>06</span>接入对应内容组件</a>
+        <a href="#checklist"><span>✓</span>运行检查清单</a>
+      </nav>
+      <div class="side-foot">基于 HM_Music_git_project<br>基于当前已写好的 HMMainPage<br><button class="print-button" id="print-button" type="button">打印 / 保存为 PDF</button></div>
+    </aside>
+    <main id="top">
+      <header class="hero">
+        <div class="eyebrow">ARKTS · NAVIGATION · TABS</div>
+        <h1>接着已有主页<br>完善四个 Tab</h1>
+        <p class="lead">你的 HMMainPage 已有 Tab 数据、图标和容器结构。<br>从现有代码出发，逐步补齐内容、路由和选中状态。</p>
+        <div class="pills"><span class="pill">6 步增量完善</span><span class="pill">核心代码可复制</span><span class="pill">基于当前源码</span><span class="pill">单文件 · 可离线阅读</span></div>
+      </header>
+
+      <section id="overview" class="section">
+        <h2 class="intro-title">先弄清楚：谁负责跳转，谁负责切换</h2>
+        <p>沿用参考项目的 <code>Navigation + NavPathStack + Tabs</code> 结构。广告结束后进入 <code>HMMainPage</code>，它承载底部四个 Tab；推荐、发现、动态、我的则是放入 Tab 的内容组件。</p>
+        <div class="architecture" role="img" aria-label="Index 的 Navigation 打开广告页，广告结束后替换为 HMMainPage，主页通过 Tabs 展示推荐、发现、动态、我的四个内容组件。">
+          <div class="flow-row"><div class="flow-node"><strong>Index</strong><small>Navigation 导航容器</small></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-node"><strong>HMAdvertisePage</strong><small>3 秒结束 / 点击跳过</small></div><div class="flow-arrow" aria-hidden="true">→</div><div class="flow-node main"><strong>HMMainPage</strong><small>NavDestination + Tabs</small></div></div>
+          <div class="flow-caption">广告 → 主页：replacePathByName　｜　主页内：Tabs 切换内容</div>
+          <div class="tab-grid"><div class="tab-node">推荐<small>HMHomePage</small></div><div class="tab-node">发现<small>HMFindPage</small></div><div class="tab-node">动态<small>HMMomentPage</small></div><div class="tab-node">我的<small>HMMinePage</small></div></div>
+        </div>
+        <div class="note"><strong>两个动作，两个职责。</strong>广告到主页是路由跳转；四个 Tab 之间是 <code>Tabs</code> 切换内容。<code>HMMainPage</code> 是整个首页容器，<code>HMHomePage</code> 在本教程中专指“推荐”内容页。</div>
+        <div class="table-wrap"><table><thead><tr><th>职责</th><th>参考项目文件</th><th>当前项目文件</th></tr></thead><tbody><tr><td>导航容器、打开广告</td><td><code>Index.ets</code></td><td><code>Index.ets</code></td></tr><tr><td>广告结束后进入主页</td><td><code>Start.ets</code></td><td><code>HMAdvertisePage.ets</code></td></tr><tr><td>承载四个 Tab</td><td><code>Layout.ets</code></td><td><code>HMMainPage.ets</code></td></tr><tr><td>注册页面路由</td><td><code>route_map.json</code></td><td><code>router_map.json</code></td></tr></tbody></table></div>
+        <div class="source-roots">参考项目根目录<code>/Users/cm/Desktop/HarmonyOSProject/HM_Music_git_project/ArkTS-main</code>当前练习项目根目录<code>/Users/cm/Desktop/HarmonyOSProject/HarmonyOSPracticeProjectOnCM</code>页面文件位于 <code>entry/src/main/ets/pages/</code>；路由表位于 <code>entry/src/main/resources/base/profile/</code>。</div>
+        <h3>你已经写好的部分，直接沿用</h3>
+<div class="table-wrap"><table><thead><tr><th>已有代码</th><th>当前位置（本次读取版本）</th><th>接下来怎么处理</th></tr></thead><tbody>
+<tr><td><code>HMMainPageBuilder</code>、<code>HMTabData</code></td><td>HMMainPage.ets 第 3、8 行</td><td>沿用构建入口和数据类型</td></tr>
+<tr><td><code>@Local currentIndex</code>、四项 <code>tabBarData</code></td><td>第 15、17 行</td><td>沿用状态和推荐 / 发现 / 动态 / 我的四项数据</td></tr>
+<tr><td><code>tabBarBuilder</code></td><td>第 24 行</td><td>图标、文字和条件颜色已写好</td></tr>
+<tr><td><code>NavDestination → Tabs → ForEach → TabContent</code></td><td>第 36 行起</td><td>保留结构，修正内容区域与 onChange</td></tr>
+<tr><td><code>pathStack</code> 和 <code>onReady</code></td><td>第 16、60 行</td><td>沿用现有导航上下文获取方式</td></tr>
+</tbody></table></div>
+<div class="note"><strong>本版从你的现有代码继续。</strong>第一步直接修正 <code>TabContent</code> 内的内容；Tab 数据、图标、Builder、背景和安全区样式都可沿用。下面标明每一步的局部修改位置。</div>
+      </section>
+
+      <section id="step1" class="section"><div class="section-heading"><span class="step-number">01</span><div><div class="section-kicker">保留已完成的容器与 Tab 栏</div><h2>先修正 TabContent 的内容</h2></div></div>
+<p>你已经有 <code>NavDestination + Tabs + ForEach</code>。当前卡点在 <code>TabContent</code> 内：第 41 行根据 <code>this.currentIndex</code> 判断，第 42 行又调用了 <code>HMMainPage()</code> 自身，后面的分支还是空的。</p>
+<div class="note warning"><strong>先移除内容区域内的自递归。</strong>仅替换 <code>TabContent</code> 里面的分支；文件顶部 <code>HMMainPageBuilder()</code> 中的 <code>HMMainPage()</code> 是正常的路由构建调用，应保留。</div>
+<p>先用当前循环项的 <code>item.text</code> 显示“推荐页 / 发现页 / 动态页 / 我的页”。这样无需先创建新文件，就能验证四项内容切换。</p>
+<div class="file-label">修改位置：HMMainPage.ets → ForEach 回调内 → TabContent</div>
+<div class="code-block"><div class="code-head"><span>局部替换 · TabContent 及其原有属性链</span><button class="copy" type="button">复制代码</button></div><pre><code>TabContent() {
+  Column() {
+    Text(`${item.text}页`)
+      .fontSize(24)
+      .fontColor(Color.White)
+  }
+  .width(&#x27;100%&#x27;)
+  .height(&#x27;100%&#x27;)
+  .justifyContent(FlexAlign.Center)
+}
+.tabBar(this.tabBarBuilder(item, index))
+.backgroundColor(&#x27;#131215&#x27;)
+.expandSafeArea(
+  [SafeAreaType.SYSTEM],
+  [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM]
+)</code></pre></div>
+<p>这段仍放在你已有的 <code>ForEach(this.tabBarData, (item: HMTabData, index: number) =&gt; { ... })</code> 中。每项文字来自该项自身的数据，内容不会随其他 Tab 的选中状态一起改变。</p>
+<p>原来的 <code>tabBarData</code>、<code>tabBarBuilder</code>、外层 <code>Tabs</code>、<code>pathStack</code> 和 <code>onReady</code> 均可沿用；此阶段暂时保留现有导入，拆分子组件时再调整。</p>
+<div class="checkpoint">完成这一步：已有主页仍显示原来的图标 Tab 栏，内容区域改为四个不同的占位页。完成第 2 步路由配置后再从广告进入验证。</div>
+</section>
+
+      <section id="step2" class="section">
+        <div class="section-heading"><span class="step-number">02</span><div><div class="section-kicker">让跳转名称找到页面</div><h2>注册主页路由</h2></div></div>
+        <p>广告页的跳转目标已经是 <code>"HMMainPage"</code>，但当前路由表只注册了广告页和 <code>HMHomePage</code>。先把名称、文件、构建入口对齐。</p>
+        <div class="file-label">修改：entry/src/main/resources/base/profile/router_map.json</div>
+        <div class="code-block"><div class="code-head"><span>router_map.json</span><button class="copy" type="button">复制代码</button></div><pre><code>{
+  "routerMap": [
+    {
+      "name": "HMAdvertisePage",
+      "pageSourceFile": "src/main/ets/pages/HMAdvertisePage.ets",
+      "buildFunction": "HMAdvertisePageBuilder"
+    },
+    {
+      "name": "HMMainPage",
+      "pageSourceFile": "src/main/ets/pages/HMMainPage.ets",
+      "buildFunction": "HMMainPageBuilder"
+    }
+  ]
+}</code></pre></div>
+        <div class="route-chain"><code>跳转名称</code><span>→</span><code>name</code><span>→</span><code>pageSourceFile</code><span>→</span><code>buildFunction</code></div>
+        <p><code>HMHomePage</code> 后面作为“推荐”Tab 的内容组件使用，因此这个阶段不需要注册成独立路由。</p>
+        <p>当前 <code>entry/src/main/module.json5</code> 已经在 <code>module</code> 对象内正确引用了路由表，保留这个字段即可：</p>
+        <div class="code-block"><div class="code-head"><span>module.json5 · 保留现有字段</span><button class="copy" type="button">复制代码</button></div><pre><code>"routerMap": "$profile:router_map"</code></pre></div>
+        <p><code>main_pages.json</code> 保留应用入口即可，不需要加入四个 Tab 子组件：</p>
+        <div class="code-block"><div class="code-head"><span>main_pages.json</span><button class="copy" type="button">复制代码</button></div><pre><code>{
+  "src": [
+    "pages/Index"
+  ]
+}</code></pre></div>
+        <div class="checkpoint">本步产物：路由名称 HMMainPage 可以找到 HMMainPageBuilder。</div>
+      </section>
+
+      <section id="step3" class="section"><div class="section-heading"><span class="step-number">03</span><div><div class="section-kicker">已有逻辑主要做核对</div><h2>沿用入口和广告跳转</h2></div></div>
+<p><code>EntryAbility.ets</code> 已通过 <code>windowStage.loadContent('pages/Index', ...)</code> 加载入口。你现有 <code>Index</code> 使用 <code>AppStorageV2</code> 取得导航栈，并用 <code>Navigation(this.pathStack)</code> 管理页面，这套代码可以继续使用。</p>
+<div class="code-block"><div class="code-head"><span>Index.ets · 已有代码，保留</span><button class="copy" type="button">复制代码</button></div><pre><code>import { AppStorageV2 } from &#x27;@kit.ArkUI&#x27;
+
+// Index 组件内已有的字段
+pathStack: NavPathStack = AppStorageV2.connect(
+  NavPathStack,
+  &#x27;rooterController&#x27;,
+  () =&gt; new NavPathStack()
+)!</code></pre></div>
+<p>现有 <code>Navigation</code> 的 <code>.onAppear</code> 已打开广告。如果希望避免容器再次出现时重复入栈，可仅在原回调里增加空栈判断：</p>
+<div class="code-block"><div class="code-head"><span>可选完善 · 只替换 Navigation 的 onAppear</span><button class="copy" type="button">复制代码</button></div><pre><code>.onAppear(() =&gt; {
+  if (this.pathStack.size() === 0) {
+    this.pathStack.pushPathByName(&#x27;HMAdvertisePage&#x27;, null, false)
+  }
+})</code></pre></div>
+<h3>广告页已经把两个入口汇合到 goHome()</h3>
+<p>你已有 3 秒倒计时、跳过按钮、清理计时器和跳转目标。保留这些方法即可，当前真正缺少的是第 2 步中的路由注册：</p>
+<div class="code-block"><div class="code-head"><span>HMAdvertisePage.ets · 已有跳转逻辑，保留</span><button class="copy" type="button">复制代码</button></div><pre><code>private goHome(): void {
+  this.clearCountdown()
+  this.jumpToHomePage()
+}
+
+private jumpToHomePage(): void {
+  this.pathStack.replacePathByName(&#x27;HMMainPage&#x27;, null, false)
+}</code></pre></div>
+<p>广告页 <code>NavDestination</code> 上已有的回调负责取得入口正在使用的导航栈：</p>
+<div class="code-block"><div class="code-head"><span>HMAdvertisePage.ets · 已有 onReady，保留</span><button class="copy" type="button">复制代码</button></div><pre><code>.onReady((context: NavDestinationContext) =&gt; {
+  this.pathStack = context.pathStack
+})</code></pre></div>
+<div class="note"><strong>保留 replace 和计时器清理。</strong><code>replacePathByName</code> 将栈顶广告页替换成主页，返回时不会再看到广告。你已有的按钮点击、倒计时结束调用 <code>goHome()</code>，以及 <code>aboutToDisappear → clearCountdown()</code> 都应保留。</div>
+<div class="checkpoint">现在运行：等待 3 秒或点击跳过，都进入已有的四 Tab 主页；默认内容显示“推荐页”。此时点击其他 Tab 能切换文字，高亮在下一步补齐。</div>
+</section>
+
+      <section id="step4" class="section"><div class="section-heading"><span class="step-number">04</span><div><div class="section-kicker">选中状态和样式已经定义</div><h2>只补齐 onChange 回调</h2></div></div>
+<p>你的 <code>@Local currentIndex: number = 0</code> 和 <code>tabBarBuilder</code> 已经写好。图标和文字颜色也已经根据 <code>currentIndex == index</code> 判断，现在只缺少切换时给 <code>currentIndex</code> 赋值。</p>
+<div class="file-label">修改位置：HMMainPage.ets → Tabs 的空 onChange 回调（本次读取版本第 56 行）</div>
+<div class="code-block"><div class="code-head"><span>替换现有空回调</span><button class="copy" type="button">复制代码</button></div><pre><code>.onChange((index: number) =&gt; {
+  this.currentIndex = index
+})</code></pre></div>
+<p>这段接在现有 <code>Tabs</code> 的属性链上。它收到当前选中的 Tab 索引，再更新你已声明的 <code>@Local</code> 状态，触发自定义标签颜色刷新。</p>
+<div class="table-wrap"><table><thead><tr><th>已有部分</th><th>本步处理</th></tr></thead><tbody><tr><td><code>@Local currentIndex</code></td><td>保留，只在切换时更新值</td></tr><tr><td><code>tabBarBuilder(item, index)</code></td><td>保留已有图标、文字和配色</td></tr><tr><td><code>.tabBar(this.tabBarBuilder(item, index))</code></td><td>保留，继续使用已有标签样式</td></tr><tr><td>空 <code>.onChange()</code></td><td>改为接收 index 并赋给 currentIndex</td></tr></tbody></table></div>
+<p><strong>实际的点击与内容切换由 Tabs 负责。</strong>此回调同步的是自定义 Tab 栏的高亮状态，不需要再为每个标签写路由跳转。</p>
+<div class="checkpoint">现在运行：点击四个 Tab，分别出现四种页面文字，且只有当前项的图标和文字显示选中颜色。至此，空页版本已走通。</div>
+</section>
+
+      <section id="step5" class="section">
+        <div class="section-heading"><span class="step-number">05</span><div><div class="section-kicker">在占位页已能切换的基础上</div><h2>将内容拆成四个组件</h2></div></div>
+        <p>完成前四步后，点击四个 Tab 已能展示对应文字和高亮，已经满足“可以是空页”的最小目标。这一步把占位内容拆成独立组件，方便以后分别填充真实页面。</p><p>你现有 <code>HMHomePage</code> 是带 <code>NavDestination</code> 的独立路由页面。把它改成下面这个普通内容组件，并导出；第 2 步中已将它从路由表移出。</p>
+        <div class="file-label">修改：entry/src/main/ets/pages/HMHomePage.ets</div>
+        <div class="code-block"><div class="code-head"><span>HMHomePage.ets · 推荐内容</span><button class="copy" type="button">复制代码</button></div><pre><code>@Component
+export struct HMHomePage {
+  build() {
+    Column() {
+      Text('推荐页')
+        .fontSize(24)
+        .fontColor(Color.White)
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+    .backgroundColor('#131215')
+  }
+}</code></pre></div>
+        <p>在同一 <code>pages</code> 目录创建另外三个文件，复制上述结构，并替换组件名称和文字：</p>
+        <div class="table-wrap"><table><thead><tr><th>文件名</th><th>导出的组件名称</th><th>页面文字</th></tr></thead><tbody><tr><td><code>HMHomePage.ets</code></td><td><code>HMHomePage</code></td><td>推荐页</td></tr><tr><td><code>HMFindPage.ets</code></td><td><code>HMFindPage</code></td><td>发现页</td></tr><tr><td><code>HMMomentPage.ets</code></td><td><code>HMMomentPage</code></td><td>动态页</td></tr><tr><td><code>HMMinePage.ets</code></td><td><code>HMMinePage</code></td><td>我的页</td></tr></tbody></table></div>
+        <p>例如，发现页就是：</p>
+        <div class="code-block"><div class="code-head"><span>HMFindPage.ets</span><button class="copy" type="button">复制代码</button></div><pre><code>@Component
+export struct HMFindPage {
+  build() {
+    Column() {
+      Text('发现页')
+        .fontSize(24)
+        .fontColor(Color.White)
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+    .backgroundColor('#131215')
+  }
+}</code></pre></div>
+        <div class="note"><strong>内容组件直接放入 TabContent。</strong>这四个组件都不需要 <code>@Entry</code>、<code>NavDestination</code> 或独立导航栈。原来 <code>HMHomePage</code> 中的路由 Builder 也可以去掉。</div>
+        <p>跨文件使用组件时，要导出组件并具名导入。当前的 <code>import './HMHomePage'</code> 不会把 <code>HMHomePage</code> 组件名称导入当前文件：</p>
+        <div class="code-block"><div class="code-head"><span>HMMainPage.ets · 替换文件顶部的导入</span><button class="copy" type="button">复制代码</button></div><pre><code>import { HMHomePage } from './HMHomePage'
+import { HMFindPage } from './HMFindPage'
+import { HMMomentPage } from './HMMomentPage'
+import { HMMinePage } from './HMMinePage'</code></pre></div>
+        <div class="checkpoint">本步产物：四个文件分别导出了四个内容组件，HMMainPage 已具名导入它们；下一步替换占位内容。</div>
+      </section>
+
+      <section id="step6" class="section"><div class="section-heading"><span class="step-number">06</span><div><div class="section-kicker">继续使用现有的 ForEach 与自定义 Tab 栏</div><h2>把内容组件接入对应 Tab</h2></div></div>
+<p>保留你原来的 <code>Tabs</code>、<code>ForEach</code> 和自定义标签样式。只将第 1 步放入 <code>TabContent</code> 的占位 <code>Column</code> 换成四个内容组件。</p>
+<div class="file-label">修改位置：HMMainPage.ets → ForEach 回调内 → TabContent</div>
+<div class="code-block"><div class="code-head"><span>局部替换 · 四个 Tab 各自固定对应一个组件</span><button class="copy" type="button">复制代码</button></div><pre><code>TabContent() {
+  if (index === 0) {
+    HMHomePage()
+  } else if (index === 1) {
+    HMFindPage()
+  } else if (index === 2) {
+    HMMomentPage()
+  } else {
+    HMMinePage()
+  }
+}
+.tabBar(this.tabBarBuilder(item, index))
+.backgroundColor(&#x27;#131215&#x27;)
+.expandSafeArea(
+  [SafeAreaType.SYSTEM],
+  [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM]
+)</code></pre></div>
+<p>这里的 <code>index</code> 就是你现有 <code>ForEach(this.tabBarData, (item: HMTabData, index: number) =&gt; { ... })</code> 回调参数。第 4 步补好的 <code>.onChange</code> 继续保留。</p>
+<div class="table-wrap"><table><thead><tr><th>变量</th><th>含义</th><th>用途</th></tr></thead><tbody><tr><td><code>index</code></td><td>正在创建的这一项是第几个 Tab</td><td>固定对应推荐、发现、动态、我的内容组件</td></tr><tr><td><code>currentIndex</code></td><td>用户当前选中了哪个 Tab</td><td>控制你已有的图标和文字高亮</td></tr></tbody></table></div>
+<div class="note warning"><strong>内容判断使用每一项自己的 index。</strong>你当前代码和参考 <code>Layout.ets</code> 都使用了 <code>this.currentIndex</code> 判断每个 <code>TabContent</code> 的内容，这会使所有已构建内容页跟随当前选中项改变。此处用 <code>index</code> 让四个位置固定对应四个组件。</div>
+<p><code>HMMainPageBuilder</code>、<code>HMTabData</code>、<code>tabBarData</code>、<code>tabBarBuilder</code>、外层容器、背景、安全区、<code>pathStack</code> 和 <code>onReady</code> 均继续使用已有代码。</p>
+<div class="checkpoint">现在运行：广告后进入主页，四个 Tab 分别展示四个独立组件；选择和高亮正常。以后分别修改这四个内容文件即可。</div>
+</section>
+
+      <section id="checklist" class="section">
+        <div class="section-heading"><span class="step-number">✓</span><div><div class="section-kicker">在模拟器或真机上检查</div><h2>确认这条流程已经走通</h2></div></div>
+        <div class="table-wrap"><table><thead><tr><th>操作</th><th>预期结果</th></tr></thead><tbody><tr><td>冷启动应用</td><td>先显示广告</td></tr><tr><td>等待倒计时结束</td><td>进入主页，默认显示推荐</td></tr><tr><td>重新启动并点击跳过</td><td>立即进入主页</td></tr><tr><td>依次点击四个 Tab</td><td>内容分别显示推荐、发现、动态、我的</td></tr><tr><td>查看底栏</td><td>只有当前 Tab 使用选中颜色</td></tr><tr><td>从主页执行返回</td><td>不再回到广告页</td></tr></tbody></table></div>
+        <p>前四步完成广告跳转、占位内容切换和高亮；第五、六步把内容拆成四个独立组件。后续可以分别填充页面，播放器、网络请求和音乐列表可以作为下一阶段再接入。</p>
+        <p class="source-roots">本页已按当前 HMMainPage 的现有实现调整为增量教程。此次仅更新 HTML 说明，文中建议尚未写入 ArkTS 源文件，也未执行 HarmonyOS 编译验证。</p>
+      </section>
+      <footer><span>HarmonyOS 分步实践 · 基于 HM_Music_git_project · 2026-09-10</span><a href="#top" class="top-link">返回顶部 ↑</a></footer>
+    </main>
+  </div>
+  <div id="copy-status" class="sr-only" role="status" aria-live="polite"></div>
+  <script>
+    async function copyText(value) {
+      if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(value); return true; } catch (_) {}
+      }
+      const area = document.createElement('textarea');
+      area.value = value;
+      area.setAttribute('readonly', '');
+      area.style.cssText = 'position:fixed;left:-9999px;top:0';
+      document.body.appendChild(area);
+      area.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch (_) {}
+      area.remove();
+      return copied;
+    }
+    document.querySelectorAll('.copy').forEach((button) => {
+      const title = button.parentElement.querySelector('span').textContent;
+      button.setAttribute('aria-label', '复制 ' + title + ' 的代码');
+      button.addEventListener('click', async () => {
+        const code = button.closest('.code-block').querySelector('code').textContent;
+        const copied = await copyText(code);
+        button.textContent = copied ? '已复制 ✓' : '请手动选择';
+        document.getElementById('copy-status').textContent = copied ? title + ' 代码已复制' : '复制未成功，请选中代码手动复制';
+        window.setTimeout(() => { button.textContent = '复制代码'; }, 1800);
+      });
+    });
+    document.getElementById('print-button').addEventListener('click', () => window.print());
+    const sections = Array.from(document.querySelectorAll('main > section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('.sidebar nav a'));
+    function updateNavigation() {
+      let current = sections[0].id;
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= 140) current = section.id;
+      }
+      navLinks.forEach((link) => {
+        const active = link.getAttribute('href') === '#' + current;
+        link.classList.toggle('active', active);
+        if (active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+    let scheduled = false;
+    window.addEventListener('scroll', () => {
+      if (!scheduled) {
+        scheduled = true;
+        window.requestAnimationFrame(() => { updateNavigation(); scheduled = false; });
+      }
+    }, { passive: true });
+    updateNavigation();
+  </script>
+</body>
+</html>

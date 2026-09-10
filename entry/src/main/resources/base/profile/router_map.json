@@ -9,6 +9,11 @@
       "name": "HMHomePage",
       "pageSourceFile": "src/main/ets/pages/HMHomePage.ets",
       "buildFunction": "HMHomePageBuilder"
+    },
+    {
+      "name": "HMMainPage",
+      "pageSourceFile": "src/main/ets/pages/HMMainPage.ets",
+      "buildFunction": "HMMainPageBuilder"
     }
   ]
 }

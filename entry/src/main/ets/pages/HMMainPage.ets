@@ -1,4 +1,5 @@
-import "./HMHomePage"
+import { HMHomePage } from './HMHomePage'
+import { HMFindPage } from './HMFindPage'
 
 @Builder
 export function HMMainPageBuilder() {
@@ -39,7 +40,9 @@ struct HMMainPage {
         ForEach(this.tabBarData, (item: HMTabData, index: number) => {
           TabContent(){
             if (this.currentIndex == 0) {
-              HMMainPage()
+              HMHomePage()
+            }else if (this.currentIndex == 1) {
+              HMFindPage()
             }else if (this.currentIndex == 2) {
 
             }else {

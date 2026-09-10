@@ -5,7 +5,7 @@ export function HMHomePageBuilder() {
 }
 
 @Component
-struct HMHomePage {
+export struct HMHomePage {
   pathStack: NavPathStack = new NavPathStack()
   build(){
     NavDestination(){
