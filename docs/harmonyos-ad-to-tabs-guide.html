@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>基于现有 HMMainPage 完善四个 Tab · HarmonyOS 分步实践</title>
+  <title>推荐页独立运行与逻辑边界 · HarmonyOS 分步实践</title>
   <style>
     :root{--paper:#f7f7f2;--card:#fff;--ink:#192c2b;--muted:#64726d;--accent:#18705d;--soft:#e8f2ec;--line:#dce3dc;--code:#192b30;--code-ink:#e6eeeb;--warn:#fff7e8}
     *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #db9950;outline-offset:4px}::selection{background:#cce6d8}code,pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}p,li,td{overflow-wrap:anywhere}p{margin:12px 0}p code,li code,td code,.note code{font-size:.88em;background:#ecf0eb;padding:2px 5px;border-radius:4px}h1,h2,h3{line-height:1.35;letter-spacing:-.035em}h1{font-size:clamp(34px,4.2vw,56px);margin:18px 0}h2{font-size:27px;margin:0}h3{font-size:18px;margin:25px 0 8px}ul,ol{padding-left:23px}li{margin:5px 0}
     .layout{max-width:1440px;margin:auto;display:grid;grid-template-columns:242px minmax(0,1fr);gap:64px;padding:0 52px}.sidebar{position:sticky;top:0;height:100vh;padding:43px 0 28px;display:flex;flex-direction:column;overflow:auto}.brand{font-size:13px;font-weight:750;letter-spacing:.12em;display:flex;align-items:center;gap:10px}.brand-mark{width:28px;height:28px;border:1.5px solid var(--accent);border-radius:9px;display:grid;place-items:center;color:var(--accent);font-size:16px}.side-caption{font-size:12px;color:var(--muted);letter-spacing:.12em;margin:48px 0 13px}.sidebar nav{display:grid;gap:5px}.sidebar nav a{display:flex;gap:12px;align-items:center;border-radius:8px;padding:10px;color:var(--muted);font-size:14px;line-height:1.6}.sidebar nav a span{font:12px/1.6 monospace;opacity:.65}.sidebar nav a:hover,.sidebar nav a.active{background:var(--soft);color:var(--accent);text-decoration:none}.side-foot{margin-top:auto;padding-top:36px;font-size:12px;color:var(--muted)}.print-button{background:transparent;border:1px solid var(--line);padding:8px 14px;border-radius:8px;color:var(--ink);margin-top:14px;font-size:13px}.print-button:hover{background:white}main{min-width:0;padding-bottom:60px}.hero{padding:65px 0 35px;border-bottom:1px solid var(--line)}.eyebrow{font-size:12px;letter-spacing:.13em;color:var(--accent);font-weight:700}.lead{font-size:18px;color:var(--muted);max-width:690px;line-height:1.85}.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.pill{font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}.section{padding:38px 0;border-bottom:1px solid var(--line)}.section-heading{display:flex;gap:17px;align-items:center;margin-bottom:20px}.step-number{flex:none;width:42px;height:42px;display:grid;place-items:center;background:var(--soft);border:1px solid #cfdfd3;border-radius:13px;font:600 15px monospace;color:var(--accent)}.section-kicker{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin-bottom:3px}.intro-title{font-size:22px}.note{padding:16px 20px;border-left:3px solid var(--accent);background:var(--soft);border-radius:0 8px 8px 0;margin:20px 0;font-size:14px}.note strong{color:var(--accent)}.note.warning{background:var(--warn);border-color:#bf8c45}.note.warning strong{color:#936b2f}.checkpoint{margin-top:22px;color:var(--accent);font-size:14px;display:flex;gap:10px;align-items:flex-start}.checkpoint:before{content:'✓';display:grid;place-items:center;flex:none;width:22px;height:22px;margin-top:2px;border-radius:50%;background:#dfede2;font-size:12px;font-weight:700}.file-label{font-size:13px;color:var(--muted);margin:18px 0 7px;overflow-wrap:anywhere}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:18px 0;background:white}table{border-collapse:collapse;width:100%;font-size:14px;text-align:left}th,td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);background:#f0f3ed;font-weight:600;white-space:nowrap}tr:last-child td{border-bottom:0}.source-roots{font-size:12px;color:var(--muted);line-height:1.8}.source-roots code{display:block;overflow-wrap:anywhere;background:none;padding:0;font-size:12px}.code-block{margin:13px 0 22px;background:var(--code);border:1px solid #263b40;border-radius:12px;overflow:hidden}.code-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 16px;background:#22363b;border-bottom:1px solid #314448;color:#b4c8c5;font:12px/1.6 monospace}.copy{border:1px solid #47605f;border-radius:5px;background:transparent;color:#dfebe6;padding:3px 10px;font:12px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;white-space:nowrap}.copy:hover{background:#324c50}pre{margin:0;padding:21px 22px;overflow-x:auto;color:var(--code-ink);font-size:13px;line-height:1.85;tab-size:2}pre code{font:inherit}.architecture{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:25px;margin:24px 0}.flow-row{display:grid;grid-template-columns:1fr 34px 1fr 34px 1.15fr;align-items:center;gap:6px}.flow-node{padding:15px 9px;border:1px solid var(--line);border-radius:9px;text-align:center;min-width:0}.flow-node strong{display:block;font-size:13px}.flow-node small{display:block;font-size:11px;color:var(--muted)}.flow-node.main{border-color:#81b59c;background:var(--soft)}.flow-arrow{text-align:center;color:#7c9b8c;font-size:21px}.flow-caption{text-align:center;font-size:12px;color:var(--muted);margin:14px 0}.tab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.tab-node{text-align:center;padding:12px 5px;background:#f4f6f1;border-radius:7px;font-size:13px}.tab-node small{display:block;color:var(--muted);font:10px/1.7 monospace}.route-chain{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;margin:16px 0;color:var(--muted)}.route-chain code{padding:5px 9px;border:1px solid var(--line);border-radius:6px;background:white;color:var(--ink)}details{margin:20px 0;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 18px}summary{cursor:pointer;padding:14px 0;color:var(--accent);font-size:14px;font-weight:600}details .code-block{margin-top:2px}footer{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:15px;margin-top:28px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.top-link{white-space:nowrap}
+    .scope-badge{display:inline-block;border-radius:5px;padding:2px 8px;font-size:12px;font-weight:650;white-space:nowrap;background:#e8f2ec;color:#18705d}.scope-badge.later{background:#fff1d6;color:#8b642a}.code-later{background:rgba(205,160,65,.17);color:#dec798}.scope-list{margin:16px 0;padding:16px 20px;border:1px solid #dccba7;background:#fffaf0;border-radius:10px}.scope-list p{margin:5px 0}
     @media(min-width:1400px){.layout{gap:84px}}
     @media(max-width:1000px){.layout{grid-template-columns:190px minmax(0,1fr);gap:30px;padding:0 28px}.sidebar nav a{font-size:13px}.flow-row{grid-template-columns:1fr 20px 1fr 20px 1fr}.architecture{padding:18px}.flow-node strong{font-size:11px}}
     @media(max-width:760px){.layout{display:block;padding:0 20px}.sidebar{position:static;height:auto;padding:20px 0 0;overflow:visible}.side-caption,.side-foot{display:none}.sidebar nav{display:flex;overflow-x:auto;gap:5px;padding:16px 0 12px;border-bottom:1px solid var(--line)}.sidebar nav a{flex:none;padding:7px 10px;font-size:12px}.sidebar nav a span{display:none}.hero{padding:29px 0}.lead{font-size:16px}.section{padding:29px 0}h2{font-size:23px}.section-heading{gap:12px}.step-number{width:36px;height:36px;border-radius:10px}.flow-row{grid-template-columns:1fr;gap:6px}.flow-arrow{transform:rotate(90deg);line-height:1.2}.flow-node strong{font-size:13px}.tab-grid{grid-template-columns:repeat(2,1fr)}pre{font-size:12px;padding:17px 15px}.code-head{padding:9px 12px}th,td{padding:11px 12px;min-width:105px}.note{padding:13px 15px}.source-roots code{font-size:11px}footer{flex-direction:column}}
@@ -29,16 +30,23 @@
         <a href="#step4"><span>04</span>补齐选中状态</a>
         <a href="#step5"><span>05</span>拆出四个内容页</a>
         <a href="#step6"><span>06</span>接入对应内容组件</a>
-        <a href="#checklist"><span>✓</span>运行检查清单</a>
+        <a href="#checklist"><span>✓</span>Tab 运行检查</a>
+        <a href="#recommend-map"><span>07</span>推荐页迁移地图</a>
+        <a href="#recommend-scope"><span>07a</span>独立运行的逻辑边界</a>
+        <a href="#recommend-host"><span>08</span>一次接好运行入口</a>
+        <a href="#recommend-data"><span>09</span>类型、数据与标题</a>
+        <a href="#recommend-top"><span>10</span>搜索框与轮播图</a>
+        <a href="#recommend-cards"><span>11</span>推荐卡片与歌单</a>
+        <a href="#recommend-check"><span>12</span>独立页面验收</a>
       </nav>
       <div class="side-foot">基于 HM_Music_git_project<br>基于当前已写好的 HMMainPage<br><button class="print-button" id="print-button" type="button">打印 / 保存为 PDF</button></div>
     </aside>
     <main id="top">
       <header class="hero">
         <div class="eyebrow">ARKTS · NAVIGATION · TABS</div>
-        <h1>接着已有主页<br>完善四个 Tab</h1>
-        <p class="lead">你的 HMMainPage 已有 Tab 数据、图标和容器结构。<br>从现有代码出发，逐步补齐内容、路由和选中状态。</p>
-        <div class="pills"><span class="pill">6 步增量完善</span><span class="pill">核心代码可复制</span><span class="pill">基于当前源码</span><span class="pill">单文件 · 可离线阅读</span></div>
+        <h1>聚焦推荐页<br>让功能独立运行</h1>
+        <p class="lead">保留推荐页自己的数据与界面，把广告、Tab 和导航放到外部。<br>一次接好运行入口，之后专注 HMHomePage 中的推荐逻辑。</p>
+        <div class="pills"><span class="pill">阶段一：Tab 骨架</span><span class="pill">当前目标：推荐页独立运行</span><span class="pill">核心代码可复制</span><span class="pill">迁移块标注源码行号</span><span class="pill">单文件 · 可离线阅读</span></div>
       </header>
 
       <section id="overview" class="section">
@@ -52,8 +60,8 @@
         <div class="note"><strong>两个动作，两个职责。</strong>广告到主页是路由跳转；四个 Tab 之间是 <code>Tabs</code> 切换内容。<code>HMMainPage</code> 是整个首页容器，<code>HMHomePage</code> 在本教程中专指“推荐”内容页。</div>
         <div class="table-wrap"><table><thead><tr><th>职责</th><th>参考项目文件</th><th>当前项目文件</th></tr></thead><tbody><tr><td>导航容器、打开广告</td><td><code>Index.ets</code></td><td><code>Index.ets</code></td></tr><tr><td>广告结束后进入主页</td><td><code>Start.ets</code></td><td><code>HMAdvertisePage.ets</code></td></tr><tr><td>承载四个 Tab</td><td><code>Layout.ets</code></td><td><code>HMMainPage.ets</code></td></tr><tr><td>注册页面路由</td><td><code>route_map.json</code></td><td><code>router_map.json</code></td></tr></tbody></table></div>
         <div class="source-roots">参考项目根目录<code>/Users/cm/Desktop/HarmonyOSProject/HM_Music_git_project/ArkTS-main</code>当前练习项目根目录<code>/Users/cm/Desktop/HarmonyOSProject/HarmonyOSPracticeProjectOnCM</code>页面文件位于 <code>entry/src/main/ets/pages/</code>；路由表位于 <code>entry/src/main/resources/base/profile/</code>。</div>
-        <h3>你已经写好的部分，直接沿用</h3>
-<div class="table-wrap"><table><thead><tr><th>已有代码</th><th>当前位置（本次读取版本）</th><th>接下来怎么处理</th></tr></thead><tbody>
+        <div class="note"><strong>当前目标：只学习和补充推荐页逻辑。</strong>先阅读 <a href="#recommend-scope">第 07a 节：独立运行的逻辑边界</a> 和第 08 节的一次性入口说明，再迁移第 09–11 节中的推荐内容。第 01–06 节保留此前的广告 / Tab 学习记录，不作为本次独立推荐页的前置任务。</div><h3>第一阶段已使用的基础结构</h3>
+<div class="table-wrap"><table><thead><tr><th>已有代码</th><th>位置（第一阶段读取版本）</th><th>接下来怎么处理</th></tr></thead><tbody>
 <tr><td><code>HMMainPageBuilder</code>、<code>HMTabData</code></td><td>HMMainPage.ets 第 3、8 行</td><td>沿用构建入口和数据类型</td></tr>
 <tr><td><code>@Local currentIndex</code>、四项 <code>tabBarData</code></td><td>第 15、17 行</td><td>沿用状态和推荐 / 发现 / 动态 / 我的四项数据</td></tr>
 <tr><td><code>tabBarBuilder</code></td><td>第 24 行</td><td>图标、文字和条件颜色已写好</td></tr>
@@ -64,8 +72,8 @@
       </section>
 
       <section id="step1" class="section"><div class="section-heading"><span class="step-number">01</span><div><div class="section-kicker">保留已完成的容器与 Tab 栏</div><h2>先修正 TabContent 的内容</h2></div></div>
-<p>你已经有 <code>NavDestination + Tabs + ForEach</code>。当前卡点在 <code>TabContent</code> 内：第 41 行根据 <code>this.currentIndex</code> 判断，第 42 行又调用了 <code>HMMainPage()</code> 自身，后面的分支还是空的。</p>
-<div class="note warning"><strong>先移除内容区域内的自递归。</strong>仅替换 <code>TabContent</code> 里面的分支；文件顶部 <code>HMMainPageBuilder()</code> 中的 <code>HMMainPage()</code> 是正常的路由构建调用，应保留。</div>
+<p>你已经有 <code>NavDestination + Tabs + ForEach</code>。前一版本的内容区域曾调用 <code>HMMainPage()</code> 自身；本轮已改为 <code>HMHomePage()</code>，这个接入已经完成。下面的占位写法保留作第一阶段练习参考，继续做推荐页时可直接阅读第 07 节。</p>
+<div class="note warning"><strong>区分两处调用。</strong>内容区域现在使用 <code>HMHomePage()</code>；文件顶部 <code>HMMainPageBuilder()</code> 中的 <code>HMMainPage()</code> 是正常的路由构建调用，应保留。</div>
 <p>先用当前循环项的 <code>item.text</code> 显示“推荐页 / 发现页 / 动态页 / 我的页”。这样无需先创建新文件，就能验证四项内容切换。</p>
 <div class="file-label">修改位置：HMMainPage.ets → ForEach 回调内 → TabContent</div>
 <div class="code-block"><div class="code-head"><span>局部替换 · TabContent 及其原有属性链</span><button class="copy" type="button">复制代码</button></div><pre><code>TabContent() {
@@ -91,7 +99,7 @@
 
       <section id="step2" class="section">
         <div class="section-heading"><span class="step-number">02</span><div><div class="section-kicker">让跳转名称找到页面</div><h2>注册主页路由</h2></div></div>
-        <p>广告页的跳转目标已经是 <code>"HMMainPage"</code>，但当前路由表只注册了广告页和 <code>HMHomePage</code>。先把名称、文件、构建入口对齐。</p>
+        <p>本轮已确认：广告页的跳转目标是 <code>"HMMainPage"</code>，当前路由表也已经注册了这个页面。独立推荐页方案会保留现有 HMHomePageBuilder 作为路由适配入口，因此现有路由表可以沿用。下面记录当前的三项配置，供整体接入时对照。</p>
         <div class="file-label">修改：entry/src/main/resources/base/profile/router_map.json</div>
         <div class="code-block"><div class="code-head"><span>router_map.json</span><button class="copy" type="button">复制代码</button></div><pre><code>{
   "routerMap": [
@@ -101,6 +109,11 @@
       "buildFunction": "HMAdvertisePageBuilder"
     },
     {
+      "name": "HMHomePage",
+      "pageSourceFile": "src/main/ets/pages/HMHomePage.ets",
+      "buildFunction": "HMHomePageBuilder"
+    },
+    {
       "name": "HMMainPage",
       "pageSourceFile": "src/main/ets/pages/HMMainPage.ets",
       "buildFunction": "HMMainPageBuilder"
@@ -108,7 +121,7 @@
   ]
 }</code></pre></div>
         <div class="route-chain"><code>跳转名称</code><span>→</span><code>name</code><span>→</span><code>pageSourceFile</code><span>→</span><code>buildFunction</code></div>
-        <p><code>HMHomePage</code> 后面作为“推荐”Tab 的内容组件使用，因此这个阶段不需要注册成独立路由。</p>
+        <p>推荐内容组件本身不依赖路由。当前配置中的 HMHomePageBuilder 可以保留为适配入口，按第 08 节把 NavDestination 包装放到该 Builder 中即可。</p>
         <p>当前 <code>entry/src/main/module.json5</code> 已经在 <code>module</code> 对象内正确引用了路由表，保留这个字段即可：</p>
         <div class="code-block"><div class="code-head"><span>module.json5 · 保留现有字段</span><button class="copy" type="button">复制代码</button></div><pre><code>"routerMap": "$profile:router_map"</code></pre></div>
         <p><code>main_pages.json</code> 保留应用入口即可，不需要加入四个 Tab 子组件：</p>
@@ -137,7 +150,7 @@ pathStack: NavPathStack = AppStorageV2.connect(
   }
 })</code></pre></div>
 <h3>广告页已经把两个入口汇合到 goHome()</h3>
-<p>你已有 3 秒倒计时、跳过按钮、清理计时器和跳转目标。保留这些方法即可，当前真正缺少的是第 2 步中的路由注册：</p>
+<p>你已有 3 秒倒计时、跳过按钮、清理计时器和跳转目标。本轮也已确认 HMMainPage 路由注册完成，下面这些方法继续沿用：</p>
 <div class="code-block"><div class="code-head"><span>HMAdvertisePage.ets · 已有跳转逻辑，保留</span><button class="copy" type="button">复制代码</button></div><pre><code>private goHome(): void {
   this.clearCountdown()
   this.jumpToHomePage()
@@ -168,7 +181,7 @@ private jumpToHomePage(): void {
 
       <section id="step5" class="section">
         <div class="section-heading"><span class="step-number">05</span><div><div class="section-kicker">在占位页已能切换的基础上</div><h2>将内容拆成四个组件</h2></div></div>
-        <p>完成前四步后，点击四个 Tab 已能展示对应文字和高亮，已经满足“可以是空页”的最小目标。这一步把占位内容拆成独立组件，方便以后分别填充真实页面。</p><p>你现有 <code>HMHomePage</code> 是带 <code>NavDestination</code> 的独立路由页面。把它改成下面这个普通内容组件，并导出；第 2 步中已将它从路由表移出。</p>
+        <p>完成前四步后，点击四个 Tab 已能展示对应文字和高亮，已经满足“可以是空页”的最小目标。这一步把占位内容拆成独立组件，方便以后分别填充真实页面。</p><p>你现有 <code>HMHomePage</code> 已导出，但仍带 <code>NavDestination</code>。把它改成普通内容组件，并按第 08 节将旧路由包装移到已有 Builder 中。</p>
         <div class="file-label">修改：entry/src/main/ets/pages/HMHomePage.ets</div>
         <div class="code-block"><div class="code-head"><span>HMHomePage.ets · 推荐内容</span><button class="copy" type="button">复制代码</button></div><pre><code>@Component
 export struct HMHomePage {
@@ -201,8 +214,8 @@ export struct HMFindPage {
     .backgroundColor('#131215')
   }
 }</code></pre></div>
-        <div class="note"><strong>内容组件直接放入 TabContent。</strong>这四个组件都不需要 <code>@Entry</code>、<code>NavDestination</code> 或独立导航栈。原来 <code>HMHomePage</code> 中的路由 Builder 也可以去掉。</div>
-        <p>跨文件使用组件时，要导出组件并具名导入。当前的 <code>import './HMHomePage'</code> 不会把 <code>HMHomePage</code> 组件名称导入当前文件：</p>
+        <div class="note"><strong>内容组件直接放入 TabContent。</strong>这四个组件都不需要 <code>@Entry</code>、<code>NavDestination</code> 或独立导航栈。原来 <code>HMHomePageBuilder</code> 可以保留，按第 08 节承载路由外壳。这里示例只展示内容组件部分。</div>
+        <p>跨文件使用组件时，要导出组件并具名导入。你现在已经具名导入了 <code>HMHomePage</code> 和 <code>HMFindPage</code>，其余组件创建后可按相同方式导入：</p>
         <div class="code-block"><div class="code-head"><span>HMMainPage.ets · 替换文件顶部的导入</span><button class="copy" type="button">复制代码</button></div><pre><code>import { HMHomePage } from './HMHomePage'
 import { HMFindPage } from './HMFindPage'
 import { HMMomentPage } from './HMMomentPage'
@@ -241,8 +254,359 @@ import { HMMinePage } from './HMMinePage'</code></pre></div>
         <div class="section-heading"><span class="step-number">✓</span><div><div class="section-kicker">在模拟器或真机上检查</div><h2>确认这条流程已经走通</h2></div></div>
         <div class="table-wrap"><table><thead><tr><th>操作</th><th>预期结果</th></tr></thead><tbody><tr><td>冷启动应用</td><td>先显示广告</td></tr><tr><td>等待倒计时结束</td><td>进入主页，默认显示推荐</td></tr><tr><td>重新启动并点击跳过</td><td>立即进入主页</td></tr><tr><td>依次点击四个 Tab</td><td>内容分别显示推荐、发现、动态、我的</td></tr><tr><td>查看底栏</td><td>只有当前 Tab 使用选中颜色</td></tr><tr><td>从主页执行返回</td><td>不再回到广告页</td></tr></tbody></table></div>
         <p>前四步完成广告跳转、占位内容切换和高亮；第五、六步把内容拆成四个独立组件。后续可以分别填充页面，播放器、网络请求和音乐列表可以作为下一阶段再接入。</p>
-        <p class="source-roots">本页已按当前 HMMainPage 的现有实现调整为增量教程。此次仅更新 HTML 说明，文中建议尚未写入 ArkTS 源文件，也未执行 HarmonyOS 编译验证。</p>
+        <p class="source-roots">第一阶段记录广告与 Tab 骨架的学习顺序。第二阶段按本轮最新源码标注推荐页迁移；所有变更建议仅写入教程。</p>
       </section>
+<section id="recommend-map" class="section"><div class="section-heading"><span class="step-number">07</span><div><div class="section-kicker">第二阶段 · 从这里继续</div><h2>推荐页：文件与迁移块地图</h2></div></div>
+<p><strong>主要来源是参考项目的 <code>Recommend.ets</code>，主要目标是你项目的 <code>HMHomePage.ets</code>。</strong>推荐页内容放在 <code>HMHomePage</code> 中；独立运行时使用第 08 节的薄入口直接显示它，HMMainPage 暂不参与这条运行链。</p>
+<div class="source-roots">迁移来源<code>/Users/cm/Desktop/HarmonyOSProject/HM_Music_git_project/ArkTS-main/entry/src/main/ets/pages/Recommend.ets</code>迁移目标<code>/Users/cm/Desktop/HarmonyOSProject/HarmonyOSPracticeProjectOnCM/entry/src/main/ets/pages/HMHomePage.ets</code></div>
+<div class="table-wrap"><table><thead><tr><th>需要关注的文件</th><th>阅读重点</th><th>本阶段动作</th></tr></thead><tbody>
+<tr><td>参考 <code>pages/Recommend.ets</code></td><td>两个接口、三组数组、一个 Builder、四块 UI</td><td>按下面 A–H 标记迁移</td></tr>
+<tr><td>参考 <code>pages/Layout.ets</code> 第 43–65 行</td><td>推荐组件如何装入 Tab、底色和选中状态</td><td>以后接回 Tab 时再参考</td></tr>
+<tr><td>当前 <code>pages/HMHomePage.ets</code></td><td>推荐页真正承载内容的文件</td><td>调整内容外壳，接收 A–H 各块</td></tr>
+<tr><td>当前 <code>pages/HMMainPage.ets</code> 第 40–61 行</td><td>TabContent 中已调用 HMHomePage</td><td>本阶段暂不阅读或修复 Tab 状态</td></tr>
+<tr><td>当前 <code>resources/base/profile/router_map.json</code></td><td>当前同时注册了 HMHomePage 与 HMMainPage</td><td>保留配置，用已有 Builder 隔离路由外壳</td></tr>
+<tr><td>当前 <code>resources/base/media/</code></td><td>ic_search.svg、ic_code.svg、ic_more.svg</td><td>三个图标已齐全，直接引用</td></tr>
+<tr><td>当前 <code>module.json5</code> 第 11–15 行</td><td>INTERNET 权限</td><td>已声明，沿用即可</td></tr>
+</tbody></table></div>
+<div class="note"><strong>本次按依赖边界划分范围。</strong>搜索框、轮播、每日推荐、推荐歌单和各自的展示样式都属于推荐页，可以完整迁移。暂不需要的是外部广告、Tab、共享导航与播放逻辑，详见 <a href="#recommend-scope">第 07a 节</a>。</div><h3>推荐页内部迁移块总表</h3>
+<p>下面行号对应本轮读取的参考文件。代码块中的 <code>[迁移 A]</code> 等标记仅用于本教程定位，不会写入源文件。</p>
+<div class="table-wrap"><table><thead><tr><th>标记</th><th>Recommend.ets 行号</th><th>迁移内容</th><th>放到哪里</th><th>动作</th></tr></thead><tbody><tr><td>A</td><td>1–13</td><td>recommendDailyType、recommendListType</td><td>HMHomePage.ets：@Component 之前</td><td><span class="scope-badge">推荐页内</span> 保留两个接口，与两组卡片 UI 配套</td></tr><tr><td>B1</td><td>18–24</td><td>swiperList</td><td>HMHomePage 结构体内、build() 外</td><td><span class="scope-badge">推荐页内</span> 保留轮播图片数组</td></tr><tr><td>B2</td><td>26–55</td><td>dailyRecommend</td><td>同上</td><td><span class="scope-badge">推荐页内</span> 保留每日推荐数组与分类 / 配色字段</td></tr><tr><td>B3</td><td>57–83</td><td>recommendList</td><td>同上</td><td><span class="scope-badge">推荐页内</span> 保留推荐歌单数组</td></tr><tr><td>C</td><td>85–98</td><td>@Builder titleBuilder</td><td>HMHomePage 结构体内、build() 外</td><td><span class="scope-badge">推荐页内</span> 保留标题 Builder 与图标展示</td></tr><tr><td>D</td><td>102–120</td><td>搜索框 Row</td><td>HMHomePage.build() 的内容 Column 内</td><td><span class="scope-badge">推荐页内</span> 保留输入框和左右图标的展示</td></tr><tr><td>E</td><td>122–130</td><td>Swiper</td><td>搜索框下方</td><td><span class="scope-badge">推荐页内</span> 保留 Swiper 与自动轮播</td></tr><tr><td>F</td><td>132–174</td><td>每日推荐 Column + List</td><td>轮播图下方</td><td><span class="scope-badge">推荐页内</span> 保留每日推荐卡片、分类条和配色</td></tr><tr><td>G</td><td>176–212</td><td>推荐歌单 Column + List</td><td>每日推荐下方</td><td><span class="scope-badge">推荐页内</span> 保留歌单列表、封面播放量和标题</td></tr><tr><td>H</td><td>100–101、213–221</td><td>根 Column、尺寸与 padding</td><td>HMHomePage.build() 的内容容器</td><td><span class="scope-badge">推荐页内</span> 推荐组件自己提供尺寸、背景和必要的滚动容器</td></tr></tbody></table></div>
+<div class="note"><strong>推荐页暂时是静态数据驱动的界面。</strong>它没有导入歌曲模型或播放器。<code>models/music.ets</code>、<code>GlobalMusic.ets</code>、<code>AVPlayerManager.ets</code>、<code>AvSessionManager.ets</code>、<code>Play.ets</code> 以及当前的 <code>music_list.ets</code> 都不属于这次推荐 UI 迁移的依赖。</div>
+</section>
+<section id="recommend-scope" class="section"><div class="section-heading"><span class="step-number">07a</span><div><div class="section-kicker">当前范围 · 先看这里</div><h2>推荐页独立运行的逻辑边界</h2></div></div>
+<p><strong>目标是推荐页独立运作：</strong>它自己拥有数据、界面和页内行为。接好入口后，理解和补充功能时主要阅读 <code>HMHomePage.ets</code> 即可。</p>
+<div class="note"><strong>范围已按你的澄清调整。</strong>之前将推荐歌单、自动轮播和卡片配色标为“后补”，属于精简界面的练习建议。现在以功能独立为目标，它们都是本页逻辑，完整保留；相关黄色删减标记已撤销。</div>
+<div class="route-chain"><code>EntryAbility（已有启动）</code><span>→</span><code>Index（一次性薄入口）</code><span>→</span><code>HMHomePage（推荐页全部逻辑）</code></div>
+<h3>本阶段暂时不用关注哪些逻辑</h3>
+<div class="table-wrap"><table><thead><tr><th>暂时不需要的逻辑</th><th>当前所在文件 / 位置</th><th>为什么推荐页可以独立工作</th></tr></thead><tbody>
+<tr><td>广告图片、倒计时、跳过、广告结束跳转</td><td>HMAdvertisePage.ets</td><td>运行入口直接显示推荐页，推荐数据不来自广告页</td></tr>
+<tr><td>Tabs / TabContent、tabBarData、tabBarBuilder、currentIndex、onChange</td><td>HMMainPage.ets 第 16–61 行</td><td>这些管理底部导航，不负责推荐卡片或轮播</td></tr>
+<tr><td>发现 / 动态 / 我的的组件与数据</td><td>HMFindPage 等其他 Tab 内容</td><td>推荐页没有导入它们</td></tr>
+<tr><td>共享 AppStorageV2、NavPathStack、Navigation、打开广告</td><td>Index.ets 第 1、6、9–14 行</td><td>薄入口只调用 HMHomePage，不需要共享导航状态</td></tr>
+<tr><td>推荐组件内部的 pathStack 与 onReady</td><td>HMHomePage.ets 第 9、15–17 行</td><td>当前推荐内容没有页面跳转；可以从内容组件中移出</td></tr>
+<tr><td>NavDestination / title 及路由适配</td><td>HMHomePage.ets 第 2–5、11–17 行</td><td>放到已有 HMHomePageBuilder 适配层，推荐组件本体不用处理</td></tr>
+<tr><td>播放器、播放会话、全局播放状态、歌曲模型</td><td>参考 Utils / GlobalMusic / Play；当前 music_list.ets</td><td>参考 Recommend 没有这些依赖</td></tr>
+<tr><td>搜索结果请求、扫码流程、更多页、歌单详情、点击后播放</td><td>参考 Recommend 尚未实现</td><td>这些属于后续跨页面或业务服务接入；当前先保留输入框、图标与卡片展示</td></tr>
+</tbody></table></div>
+<p>上表中的“暂不需要”指它们不进入当前的学习和执行路径。广告页、其他 Tab、原有配置可以继续保存在工程中，无需为了推荐页独立而删除文件。</p>
+<h3>哪些仍然属于推荐页，应该保留</h3>
+<ul><li>两个推荐数据接口、三组静态数组与完整示例数据。</li><li>搜索输入框、轮播图及自动播放、每日推荐、推荐歌单。</li><li>titleBuilder、卡片分类条、背景配色、歌单封面播放量文字与溢出处理。</li><li>与这些内容直接相关的宽高、间距、图片资源、横向列表和纵向滚动。</li><li>以后增加页内筛选、选中状态等纯页面行为时，把对应状态留在推荐组件内即可。</li></ul>
+<div class="note warning"><strong>独立运行仍需要基本宿主与资源。</strong>保留 ArkUI / AbilityKit 工程、应用入口配置和现有 INTERNET 权限。推荐组件还要自己设置深色背景和尺寸，不能依靠 HMMainPage 的 TabContent 才显示正常。</div>
+<div class="checkpoint">当前验收只围绕推荐页：直接启动可见，搜索输入可用，轮播和两组横向列表工作，小屏能滚动查看全部内容。广告与其他 Tab 不作为本阶段验收项。</div>
+</section>
+<section id="recommend-host" class="section"><div class="section-heading"><span class="step-number">08</span><div><div class="section-kicker">一次性装配 · 之后专注推荐逻辑</div><h2>内容组件与运行入口怎么分开</h2></div></div>
+<p>推荐逻辑主要放进 <code>HMHomePage.ets</code>。为了让它可以直接运行，先做一次入口和内容边界的整理；下面是你可以手动采用的结构，尚未修改工程代码。</p>
+<h3>① HMHomePage 只负责推荐内容</h3>
+<p>保留现有的 <code>@Component</code> 和 <code>export struct HMHomePage</code>。把 <code>pathStack</code> 与 <code>onReady</code> 从内容组件中移出，根布局使用普通 <code>Column</code> 或 <code>Scroll</code>。</p>
+<div class="code-block"><div class="code-head"><span>HMHomePage.ets · 内容结构示意，按标记填入原版推荐块</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 A] 两个接口放在 @Component 之前
+
+@Component
+export struct HMHomePage {
+  // [迁移 B1/B2/B3] 轮播、每日推荐、推荐歌单数组
+  // [迁移 C] @Builder titleBuilder
+
+  build() {
+    Scroll() {
+      Column({ space: 10 }) {
+        // [迁移 D] 搜索框
+        // [迁移 E] 轮播图（可保留自动轮播）
+        // [迁移 F] 每日推荐
+        // [迁移 G] 推荐歌单
+      }
+      .width(&#x27;100%&#x27;)
+      .padding({ left: 10, right: 10, top: 15, bottom: 15 })
+    }
+    .width(&#x27;100%&#x27;)
+    .height(&#x27;100%&#x27;)
+    .backgroundColor(&#x27;#131215&#x27;)
+    .scrollable(ScrollDirection.Vertical)
+    .scrollBar(BarState.Off)
+  }
+}</code></pre></div>
+<p>这段只说明各块放在哪里，具体类型、数据和 UI 见第 09–11 节。推荐页的深色背景由组件自己提供，独立展示时也能读清白色文字。</p>
+<h3>② 现有 Builder 只作为路由适配层</h3>
+<p>当前路由表仍引用 <code>HMHomePageBuilder</code>。保留这个函数的名称和文件位置，将 <code>NavDestination</code> 移到它内部包装推荐组件：</p>
+<div class="code-block"><div class="code-head"><span>HMHomePage.ets · 替换现有顶部 Builder 的函数体</span><button class="copy" type="button">复制代码</button></div><pre><code>@Builder
+export function HMHomePageBuilder() {
+  NavDestination() {
+    HMHomePage()
+  }
+  .hideTitleBar(true)
+}</code></pre></div>
+<p>这段包装放在推荐组件结构体之外。旧 <code>router_map.json</code> 因此可以保留；直接展示时调用 <code>HMHomePage()</code>，通过旧路由展示时由 Builder 提供导航外壳。推荐组件内部不再嵌套 NavDestination，也无需保存导航栈。</p>
+<h3>③ 设备运行：用现有 Index 作一次性薄入口</h3>
+<p><code>EntryAbility.ets</code> 第 25 行已加载 <code>pages/Index</code>，<code>main_pages.json</code> 也已登记它。独立练习时，只需让这个入口直接显示推荐组件：</p>
+<div class="code-block"><div class="code-head"><span>Index.ets · 独立运行时的入口建议，未实际应用</span><button class="copy" type="button">复制代码</button></div><pre><code>import { HMHomePage } from &#x27;./HMHomePage&#x27;
+
+@Entry
+@Component
+struct Index {
+  build() {
+    HMHomePage()
+  }
+}</code></pre></div>
+<p>采用这段入口时，不再使用 Index 当前的 AppStorageV2、pathStack、Navigation 和广告 pushPathByName。这是一次性运行装配，之后补充推荐功能时只需回到 HMHomePage；EntryAbility、main_pages、其他 Tab 文件继续保留。</p>
+<div class="note"><strong>区分预览与设备运行。</strong>如果只看布局，可给纯推荐组件添加 <code>@Preview</code> 并在 DevEco Studio 中预览。<code>@Preview</code> 不会改变设备启动入口；要跳过广告直接在模拟器 / 真机上运行，需要采用上面的薄入口。网络图片和运行时行为以实际设备环境验证为准。</div>
+<div class="checkpoint">一次性接好后，设备启动直接显示推荐页。以后阅读和补充的重点是 HMHomePage 的数据、titleBuilder 和 build()，无需追踪广告和四个 Tab。</div>
+</section>
+<section id="recommend-data" class="section"><div class="section-heading"><span class="step-number">09</span><div><div class="section-kicker">迁移 A / B / C · 推荐页内部</div><h2>保留类型、完整数据与标题</h2></div></div>
+<p>两个接口、三组数组和标题 Builder 都是推荐页自身依赖，完整保留。它们都可以放在 <code>HMHomePage.ets</code> 中，不必引入外部歌曲模型。</p>
+<h3>A · 两个接口放在组件外</h3>
+<div class="code-block"><div class="code-head"><span>迁移 A · Recommend.ets 第 1–13 行 → HMHomePage.ets 的 @Component 之前</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 A] 原文件第 1–13 行
+interface recommendDailyType {
+  img: string // 图片
+  title: string // 简介文字
+  type: string // 标题文字
+  top: string // 标题背景色
+  bottom: string // 简介背景色
+}
+
+interface recommendListType {
+  img: string
+  title: string
+  count: string
+}</code></pre></div>
+<p>每日推荐的 <code>type / top / bottom</code> 控制分类条和背景色；歌单的 <code>count</code> 控制封面播放量文字。这些字段服务于本页 UI，无需为独立运行而删减。</p>
+<h3>B · 三组数据放在组件内、build() 外</h3>
+<div class="table-wrap"><table><thead><tr><th>标记</th><th>字段</th><th>原版数量</th><th>对应 UI</th></tr></thead><tbody><tr><td>B1</td><td>swiperList</td><td>5 张 banner</td><td>E：Swiper</td></tr><tr><td>B2</td><td>dailyRecommend</td><td>4 张每日推荐卡片</td><td>F：每日推荐</td></tr><tr><td>B3</td><td>recommendList</td><td>5 张歌单卡片</td><td>G：推荐歌单</td></tr></tbody></table></div>
+<details><summary>展开：推荐页的三组完整示例数据</summary>
+<div class="code-block"><div class="code-head"><span>迁移 B1 / B2 / B3 · Recommend.ets 第 17–83 行 → HMHomePage 结构体内、build() 外</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 B1 / B2 / B3] 原文件第 17–83 行
+// 轮播图数据
+swiperList: string[] = [
+  &quot;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner1.png&quot;,
+  &quot;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner2.png&quot;,
+  &quot;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner3.png&quot;,
+  &quot;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner4.png&quot;,
+  &quot;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/banner5.png&quot;
+]
+// 每日推荐数据
+dailyRecommend: recommendDailyType[] = [
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/recommend1.png&#x27;,
+    title: &#x27;每日推荐 | 今天从《不得不爱》听起 | 私人雷达&#x27;,
+    type: &#x27;每日推荐&#x27;,
+    top: &#x27;#660000&#x27;,
+    bottom: &#x27;#382e2f&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/recommend2.png&#x27;,
+    title: &#x27;从 [Nothing on Me] 开启无限漫游&#x27;,
+    type: &#x27;私人漫游&#x27;,
+    top: &#x27;#382e2f&#x27;,
+    bottom: &#x27;#a37862&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/recommend3.png&#x27;,
+    title: &#x27;每日推荐 | 今天从《不得不爱》听起 | 私人雷达&#x27;,
+    type: &#x27;华语流行&#x27;,
+    top: &#x27;#a37862&#x27;,
+    bottom: &#x27;#174847&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/recommend4.png&#x27;,
+    title: &#x27;每日推荐 | 今天从《不得不爱》听起 | 私人雷达&#x27;,
+    type: &#x27;私人雷达&#x27;,
+    top: &#x27;#174847&#x27;,
+    bottom: &#x27;#174847&#x27;
+  }
+]
+// 推荐歌单数据
+recommendList: recommendListType[] = [
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/list1.jpg&#x27;,
+    title: &#x27;每日推荐 | 今天从《不得不爱》听起 | 私人雷达&#x27;,
+    count: &#x27;270.9万&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/list2.jpg&#x27;,
+    title: &#x27;Yasuo和更多好听的 | 华语私人雷达 | 回忆8090&#x27;,
+    count: &#x27;476.1万&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/list3.jpg&#x27;,
+    title: &#x27;Trap Remix丨当欧美热单遇上毒性低音&#x27;,
+    count: &#x27;186.3万&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/list4.jpg&#x27;,
+    title: &#x27;满级人类进化之路必备BGM | 根本停不下来&#x27;,
+    count: &#x27;186.3万&#x27;
+  },
+  {
+    img: &#x27;http://yjy-teach-oss.oss-cn-beijing.aliyuncs.com/HeimaCloudMusic/list5.jpg&#x27;,
+    title: &#x27;认真去聆听这个世界的每一分每一秒 (强烈推荐)&#x27;,
+    count: &#x27;362.8万&#x27;
+  }
+]</code></pre></div>
+</details>
+<p>参考文件使用普通数组字段，不依赖 AppStorageV2 或全局状态。保持这种方式即可先呈现完整推荐内容。</p>
+<h3>C · 保留标题 Builder 和图标展示</h3>
+<div class="code-block"><div class="code-head"><span>迁移 C · Recommend.ets 第 85–98 行 → HMHomePage 结构体内、build() 外</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 C] 原文件第 85–98 行
+@Builder
+titleBuilder(title: string) {
+  Row() {
+    Text(title)
+      .fontColor(&#x27;#fff&#x27;)
+      .fontWeight(700)
+      .layoutWeight(1)
+    Image($r(&#x27;app.media.ic_more&#x27;))
+      .width(22)
+      .fillColor(&#x27;#fff&#x27;)
+  }
+  .width(&#x27;100%&#x27;)
+  .height(40)
+}</code></pre></div>
+<p>每日推荐与推荐歌单共用 <code>this.titleBuilder(...)</code>。右侧更多图标的展示可以保留；点击后去哪个页面属于以后增加的业务。</p>
+<div class="checkpoint">检查：两个接口、三个字段和 titleBuilder 都能在同一个内容文件里找到定义，不需要导入播放或其他页面模块。</div>
+</section>
+<section id="recommend-top" class="section"><div class="section-heading"><span class="step-number">10</span><div><div class="section-kicker">迁移 D / E · 推荐页内部</div><h2>保留搜索框和完整轮播</h2></div></div>
+<p>两块都放在 HMHomePage 的内容 Column 中。搜索框在上，轮播图在下；它们可以独立于广告和 Tabs 工作。</p>
+<h3>D · 搜索框及两侧图标</h3>
+<div class="code-block"><div class="code-head"><span>迁移 D · Recommend.ets 第 102–120 行 → HMHomePage.build() → 内容 Column 内</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 D] 原文件第 102–120 行
+// 搜索框
+Row() {
+  Image($r(&#x27;app.media.ic_search&#x27;))
+    .width(22)
+    .fillColor(&#x27;#817D83&#x27;)
+  TextInput({ placeholder: &#x27;奢香夫人&#x27; })
+    .placeholderColor(&#x27;#817D83&#x27;)
+    .padding({ left: 5 })
+    .fontColor(&#x27;#999&#x27;)
+    // 抛去左右的，剩下的尺寸都给TextInput组件
+    .layoutWeight(1)
+  Image($r(&#x27;app.media.ic_code&#x27;))
+    .width(20)
+    .fillColor(&#x27;#817D83&#x27;)
+}
+.width(&#x27;100%&#x27;)
+.backgroundColor(&#x27;#2D2B29&#x27;)
+.border({ radius: 20 })
+.padding({ left: 8, right: 8 })</code></pre></div>
+<p>保留 TextInput.layoutWeight(1)，让输入框使用图标之外的剩余宽度。ic_search 与 ic_code 当前项目已具备。</p>
+<div class="note"><strong>本页展示与跨模块业务分别处理。</strong>输入和图标显示可以直接保留；参考代码没有实现搜索请求、结果页或扫码事件，这些业务暂不接入。</div>
+<h3>E · 轮播图与自动切换</h3>
+<div class="code-block"><div class="code-head"><span>迁移 E · Recommend.ets 第 122–130 行 → 搜索框下方</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 E] 原文件第 122–130 行
+// 轮播图组件
+Swiper() {
+  ForEach(this.swiperList, (item: string) =&gt; {
+    Image(item)
+      .width(&#x27;100%&#x27;)
+  })
+}
+.border({ radius: 10 })
+.autoPlay(true) //自动播放</code></pre></div>
+<p>swiperList 与 Swiper 构成完整的页内轮播逻辑，<code>.autoPlay(true)</code> 直接保留，不需要借用广告计时器或自己创建 setInterval。</p>
+<p>若图片加载时尺寸不稳定，可为 Swiper 指定合适的高度，并让 Image 使用 <code>.height('100%').objectFit(ImageFit.Cover)</code>。这是推荐页内部的布局完善。</p>
+<div class="checkpoint">检查：搜索输入可用，左右图标可见，5 张 banner 可以自动与手动切换；不会触发未接入的跨页面业务。</div>
+</section>
+<section id="recommend-cards" class="section"><div class="section-heading"><span class="step-number">11</span><div><div class="section-kicker">迁移 F / G · 推荐页内部</div><h2>保留每日推荐和推荐歌单</h2></div></div>
+<p>每日推荐和推荐歌单都属于推荐页，整块迁移即可。它们各自依赖本文件的一组数组，并共用 titleBuilder。</p>
+<h3>F · 每日推荐：分类条、图片和简介</h3>
+<div class="code-block"><div class="code-head"><span>迁移 F · Recommend.ets 第 132–174 行 → 轮播图之后</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 F] 原文件第 132–174 行
+// 每日推荐
+Column() {
+  this.titleBuilder(&#x27;每日推荐&#x27;)
+
+  List() {
+    ForEach(this.dailyRecommend, (item: recommendDailyType, index: number) =&gt; {
+      ListItem() {
+        Column() {
+          Text(item.type)
+            .backgroundColor(item.top)
+            .width(&#x27;100%&#x27;)
+            .height(30)
+            .padding({ left: 5 })
+            .fontSize(14)
+            .fontWeight(700)
+            .fontColor(&#x27;#fff&#x27;)
+          Image(item.img)
+            .width(&#x27;100%&#x27;)
+          Text(item.title)
+            .backgroundColor(item.bottom)
+            .width(&#x27;100%&#x27;)
+            .padding(5)
+            .fontSize(14)
+            .fontColor(&#x27;#fff&#x27;)
+            // 最多显示两行
+            .maxLines(2)
+            // 文本溢出的显示形式为省略号
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+        }
+        .border({ radius: 10 })
+        .width(&#x27;40%&#x27;)
+        // .height(200)
+        .margin({ right: 10 })
+        .clip(true) // 裁剪
+      }
+    })
+  }
+  // .height()
+  .scrollBar(BarState.Off)
+  // 改变List的滑动方向
+  .listDirection(Axis.Horizontal)
+  .height(230)
+}</code></pre></div>
+<p>保留 <code>item.type / item.top / item.bottom</code> 与对应接口、数据，确保分类条和配色绑定一致。List 的横向方向、230 高度、卡片宽度、裁剪和文字省略都是本页布局的一部分。</p>
+<h3>G · 推荐歌单：封面、播放量和标题</h3>
+<div class="code-block"><div class="code-head"><span>迁移 G · Recommend.ets 第 176–212 行 → 每日推荐之后</span><button class="copy" type="button">复制代码</button></div><pre><code>// [迁移 G] 原文件第 176–212 行
+// 推荐歌单
+Column() {
+  this.titleBuilder(&#x27;推荐歌单&#x27;)
+  List() {
+    ForEach(this.recommendList, (item: recommendListType) =&gt; {
+      ListItem() {
+        Column() {
+          Stack({ alignContent: Alignment.TopStart }) {
+            Image(item.img)
+              .width(&#x27;100%&#x27;)
+              .height(100)
+              .border({ radius: 8 })
+            Text(item.count)
+              .fontColor(&#x27;#fff&#x27;)
+              .fontSize(12)
+              .fontWeight(700)
+              .margin(5)
+          }
+
+          Text(item.title)
+            .fontColor(&#x27;#fff&#x27;)
+            .fontSize(14)
+            .width(&#x27;100%&#x27;)
+            .padding(5)
+            .maxLines(2)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+        }
+        .width(&#x27;30%&#x27;)
+        // .height(200)
+        .margin({ right: 10 })
+      }
+    })
+  }
+  .scrollBar(BarState.Off)
+  .listDirection(Axis.Horizontal)
+  .height(200)
+}</code></pre></div>
+<p>Stack 将 <code>item.count</code> 叠在封面上，它只是示例数据的文字展示，不需要播放器。完整保留 recommendListType、recommendList 和该 UI 块。</p>
+<div class="note"><strong>两个“播放”概念要区分。</strong>封面上的播放量数字来自静态数据；真正点击歌单后加载歌曲、控制音频的逻辑属于后续业务。本阶段保留数字展示即可。</div>
+<div class="checkpoint">检查：4 张每日推荐卡片、5 张歌单卡片分别可横向滚动；分类与配色正常，封面播放量可见，长标题最多两行。</div>
+</section>
+<section id="recommend-check" class="section"><div class="section-heading"><span class="step-number">12</span><div><div class="section-kicker">独立页面的必要条件</div><h2>资源、运行边界与验收</h2></div></div>
+<h3>H · 推荐组件自己负责尺寸与背景</h3>
+<p>参考 Recommend 的根 Column 设置了宽高和 padding，却依赖 Layout 的 TabContent 提供深色背景。独立显示时，HMHomePage 应显式设置 <code>.width('100%')</code>、<code>.height('100%')</code> 和 <code>.backgroundColor('#131215')</code>。</p>
+<p>原版未提供整页纵向 Scroll。页面内容超出屏幕时，可采用第 08 节的 Scroll + Column 结构；把满屏高度放在 Scroll 上，内层 Column 随内容自然撑高，同时保留两个横向 List 的明确高度。</p>
+<h3>仍然需要的资源与工程配置</h3>
+<div class="table-wrap"><table><thead><tr><th>依赖</th><th>当前情况</th><th>处理方式</th></tr></thead><tbody>
+<tr><td>ic_search / ic_code / ic_more</td><td>三个本地图标均已存在</td><td>沿用 $r 引用</td></tr>
+<tr><td>14 张远程图片</td><td>地址在三个数组内</td><td>完整迁移；图片可用性需要运行时核对</td></tr>
+<tr><td>INTERNET 权限</td><td>module.json5 已声明</td><td>继续保留</td></tr>
+<tr><td>应用运行宿主</td><td>EntryAbility 与 main_pages 指向 pages/Index</td><td>保留；Index 只做一次性直接展示配置</td></tr>
+<tr><td>原有路由表</td><td>仍引用 HMHomePageBuilder</td><td>保留 Builder 适配层，无需删除原配置</td></tr>
+</tbody></table></div>
+<p>“独立”指推荐页不依赖广告、Tab 和共享业务状态；它仍是当前 HarmonyOS 工程中的组件，需要应用运行环境、资源和网络权限。可先只阅读这些配置的接入说明，不必深入模板生命周期代码。</p>
+<h3>这一阶段只验收推荐页</h3>
+<ol><li>入口直接展示 HMHomePage，启动无需等待广告或选择 Tab。</li><li>推荐组件自身提供正常的深色背景、尺寸与间距。</li><li>搜索框可以输入；轮播图可自动或手动切换。</li><li>每日推荐与推荐歌单分别可以横向滚动；标题、图片、分类色块和播放量显示正常。</li><li>小屏可以纵向滚动到最下方内容。</li><li>HMHomePage 的类型、数据、Builder 和 UI 均能在本文件中读懂，无需追踪 AppStorageV2、NavPathStack 或播放状态。</li></ol>
+<div class="note"><strong>本次只调整教程和逻辑标注。</strong>上述入口与组件整理方案尚未写入 ArkTS 源码，也未进行 HarmonyOS 编译或运行验证。</div>
+</section>
       <footer><span>HarmonyOS 分步实践 · 基于 HM_Music_git_project · 2026-09-10</span><a href="#top" class="top-link">返回顶部 ↑</a></footer>
     </main>
   </div>

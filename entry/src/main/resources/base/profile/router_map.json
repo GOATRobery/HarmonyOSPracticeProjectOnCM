@@ -14,6 +14,16 @@
       "name": "HMMainPage",
       "pageSourceFile": "src/main/ets/pages/HMMainPage.ets",
       "buildFunction": "HMMainPageBuilder"
+    },
+    {
+      "name": "HMMomentPage",
+      "pageSourceFile": "src/main/ets/pages/HMMomentPage.ets",
+      "buildFunction": "HMMomentPageBuilder"
+    },
+    {
+      "name": "HMMinePage",
+      "pageSourceFile": "src/main/ets/pages/HMMinePage.ets",
+      "buildFunction": "HMMinePageBuilder"
     }
   ]
 }

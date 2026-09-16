@@ -1,5 +1,7 @@
 import { HMHomePage } from './HMHomePage'
 import { HMFindPage } from './HMFindPage'
+import { HMMomentPage } from './HMMomentPage'
+import { HMMinePage } from './HMMinePage'
 
 @Builder
 export function HMMainPageBuilder() {
@@ -44,9 +46,9 @@ struct HMMainPage {
             }else if (this.currentIndex == 1) {
               HMFindPage()
             }else if (this.currentIndex == 2) {
-
+              HMMomentPage()
             }else {
-
+              HMMinePage()
             }
           }
           .tabBar(this.tabBarBuilder(item, index))
