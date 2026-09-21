@@ -58,8 +58,8 @@ struct HMMainPage {
       }
       .backgroundColor("#3B3F42")
       .expandSafeArea([SafeAreaType.SYSTEM],[SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
-      .onChange(() => {
-
+      .onChange((index: number) => {
+          this.currentIndex = index
       })
     }
     .onReady((context: NavDestinationContext) => {
